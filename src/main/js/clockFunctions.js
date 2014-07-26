@@ -390,6 +390,7 @@ var clockFunctions = {
         var hours24 = this.getHours24(hours12, isPM);
         dateToChange.setHours(hours24);
         dateToChange.setMinutes(this.minutes);
+        return dateToChange;
       },
       angle: angle
     };
@@ -397,8 +398,13 @@ var clockFunctions = {
     if (initialDateOptional) {
       var isPm = result.guessPM(initialDateOptional, hours12);
       result.pm = isPm;
-      result.date = result.setToDate(initialDateOptional, isPm);
+      var date = result.setToDate(initialDateOptional, isPm);
+      result.date = date;
       result.timeAsString = isPm ? result.timeAsString + " PM" : result.timeAsString + " AM";
+
+      var hourAsString = date.getHours() < 10 ? "0" + date.getHours() : "" + date.getHours();
+      var minutesAsString = date.getMinutes() < 10 ? "0" + date.getMinutes() : "" + date.getMinutes();
+      result.timeAsString24 = hourAsString + ":" + minutesAsString;
     }
     return result;
   },
