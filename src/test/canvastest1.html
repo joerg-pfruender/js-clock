@@ -126,13 +126,12 @@
       var numberOfPixelsRightFromCenter = offsetFromLeft - clockRadius;
       var numberOfPixelsBottomFromCenter = offsetFromTop - clockRadius;
       var currentSelectedTime = clockFunctions.getTimeFromCoordinates(numberOfPixelsRightFromCenter, numberOfPixelsBottomFromCenter, lastSelectedDate);
-//  console.log(currentSelectedTime.timeAsString)
       if (!lastSelectedTime || currentSelectedTime.timeAsString != lastSelectedTime.timeAsString) {
         lastSelectedTime = currentSelectedTime;
         if (currentSelectedTime.date) {
           lastSelectedDate = currentSelectedTime.date;
         }
-        document.getElementsByName("usr_time1")[0].value = currentSelectedTime.timeAsString;//(currentSelectedTime.hours + ":" + currentSelectedTime.minutes)
+        document.getElementsByName("usr_time1")[0].value = currentSelectedTime.timeAsString24
         canvasClockPainter.clearCanvas(canvasContext)
         canvasClockPainter.paintClock(canvasContext)
         canvasClockPainter.paintClockHand(canvasContext, currentSelectedTime.hours, currentSelectedTime.minutes)
