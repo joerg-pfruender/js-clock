@@ -1,5 +1,5 @@
-Time input for Javascript
-=========================
+Time picker
+===========
 
 I have been annoyed by clicking three dozen times with my mouse to select a time on a web page.
 I do not want to switch from my mouse to the keyboard and back again.
