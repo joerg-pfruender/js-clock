@@ -14,7 +14,7 @@ Next TODOs:
 -----------
 
 * respond to change made to the input element by keyboard
-* auto-hide popup
+* auto-hide popup and remove the close button
 * test with several inputs
 * test on internet explorer
 * test on mobile devices
