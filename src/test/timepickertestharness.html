@@ -2,13 +2,13 @@
 <html>
 <head>
   <title>timetest</title>
-  <script type="text/javascript" src="../main/js/clockFunctions.js"></script>
-  <link rel="stylesheet" type="text/css" href="../main/css/clocktest.css">
+  <script type="text/javascript" src="../main/js/timepicker.js"></script>
+  <link rel="stylesheet" type="text/css" href="../main/css/timePickerTest.css">
 </head>
 <body>
 <div id="testroot"></div>
 <h3>Test harness for clock</h3>
-<input type="time" name="usr_time1">
+<!--<input type="time" name="usr_time1">-->
 <input type="time" name="usr_time2">
 <section>
 
@@ -20,38 +20,29 @@
   <br>
 
   <div>
-    <canvas id="canvastest" width="160" height="160">
-    </canvas>
+<!--    <canvas id="canvastest" width="160" height="160">
+    </canvas>-->
   </div>
   <!--&ndash;&gt;-->
   <script type="text/javascript">
 
 
+    addTimePicker.to(document.getElementsByName("usr_time2")[0]);
+
     // http://dynamic-tools.net/toolbox/popUp/
 
-    var cumulativeOffset = function (element) {
-      var top = 0, left = 0;
-      do {
-        top += element.offsetTop || 0;
-        left += element.offsetLeft || 0;
-        element = element.offsetParent;
-      } while (element);
-
-      return {
-        top: top,
-        left: left
-      };
-    };
+/*
 
 
-    var mouseHandler = {
+
+    var timePickerCanvasMouseHandler = {
 
       drag: false,
       offsetLeft: 0,
       offsetTop: 0,
 
       handleEvent: function handleEvent(left, top) {
-        console.log("left=" + left + ", top=" + top);
+//        console.log("left=" + left + ", top=" + top);
 
       },
 
@@ -105,14 +96,14 @@
       };
     };
 
-    var canvas = document.getElementById('canvastest');
-    var canvasContext = canvas.getContext('2d');
-    canvasClockPainter.paintClock(canvasContext);
+    var timePickerCanvas = document.getElementById('canvastest');
+    var timePickerCanvasContext = timePickerCanvas.getContext('2d');
+    canvasClockPainter.paintClock(timePickerCanvasContext);
 
-    var offset = cumulativeOffset(canvas)
-    //    console.log("offset=" + offset.top + ", " + offset.left);
-    mouseHandler.offsetLeft = offset.left;
-    mouseHandler.offsetTop = offset.top;
+    var timePickerCanvasOffset = cumulativeOffset(timePickerCanvas)
+    //    console.log("timePickerCanvasOffset=" + timePickerCanvasOffset.top + ", " + timePickerCanvasOffset.left);
+    timePickerCanvasMouseHandler.offsetLeft = timePickerCanvasOffset.left;
+    timePickerCanvasMouseHandler.offsetTop = timePickerCanvasOffset.top;
 
     var initialDate = new Date();
     initialDate.setHours(12)
@@ -121,37 +112,38 @@
 
     var lastSelectedTime;
 
-    mouseHandler.handleEvent = function handleEvent(offsetFromLeft, offsetFromTop) {
-//  console.log("offset from Left=" + offsetFromLeft + ", offset from Top=" + offsetFromTop);
+    timePickerCanvasMouseHandler.handleEvent = function handleEvent(offsetFromLeft, offsetFromTop) {
+//  console.log("timePickerCanvasOffset from Left=" + offsetFromLeft + ", timePickerCanvasOffset from Top=" + offsetFromTop);
       var numberOfPixelsRightFromCenter = offsetFromLeft - clockRadius;
       var numberOfPixelsBottomFromCenter = offsetFromTop - clockRadius;
-      var currentSelectedTime = clockFunctions.getTimeFromCoordinates(numberOfPixelsRightFromCenter, numberOfPixelsBottomFromCenter, lastSelectedDate);
+      var currentSelectedTime = addTimePicker.getTimeFromCoordinates(numberOfPixelsRightFromCenter, numberOfPixelsBottomFromCenter, lastSelectedDate);
       if (!lastSelectedTime || currentSelectedTime.timeAsString != lastSelectedTime.timeAsString) {
         lastSelectedTime = currentSelectedTime;
         if (currentSelectedTime.date) {
           lastSelectedDate = currentSelectedTime.date;
         }
         document.getElementsByName("usr_time1")[0].value = currentSelectedTime.timeAsString24
-        canvasClockPainter.clearCanvas(canvasContext)
-        canvasClockPainter.paintClock(canvasContext)
-        canvasClockPainter.paintClockHand(canvasContext, currentSelectedTime.hours, currentSelectedTime.minutes)
+        canvasClockPainter.clearCanvas(timePickerCanvasContext)
+        canvasClockPainter.paintClock(timePickerCanvasContext)
+        canvasClockPainter.paintClockHand(timePickerCanvasContext, currentSelectedTime.hours, currentSelectedTime.minutes)
       }
     };
 
-    canvasClockPainter.paintClockHand(canvasContext, 12, 00)
+    canvasClockPainter.paintClockHand(timePickerCanvasContext, 12, 00)
 
-    canvas.addEventListener("mousedown", function (event) {
-      mouseHandler.doMouseDown(event);
+    timePickerCanvas.addEventListener("mousedown", function (event) {
+      timePickerCanvasMouseHandler.doMouseDown(event);
     }, false);
-    canvas.addEventListener("mouseup", function (event) {
-      mouseHandler.doMouseUp(event);
+    timePickerCanvas.addEventListener("mouseup", function (event) {
+      timePickerCanvasMouseHandler.doMouseUp(event);
     }, false);
-    canvas.addEventListener("mousemove", function (event) {
-      mouseHandler.doMouseMove(event);
+    timePickerCanvas.addEventListener("mousemove", function (event) {
+      timePickerCanvasMouseHandler.doMouseMove(event);
     }, false);
-    canvas.addEventListener("mouseout", function (event) {
-      mouseHandler.doMouseOut(event);
+    timePickerCanvas.addEventListener("mouseout", function (event) {
+      timePickerCanvasMouseHandler.doMouseOut(event);
     }, false);
+*/
 
 
   </script>

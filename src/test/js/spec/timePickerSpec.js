@@ -50,7 +50,7 @@ var timeSamples = [
 describe('getTimeFromCoordinates parameterized test', function () {
   timeSamples.forEach(function (timeSample) {
     it('time from [' + timeSample.x + ', ' + timeSample.y + '] should be ' + timeSample.expectedTime, function () {
-      var result = clockFunctions.getTimeFromCoordinates(timeSample.x, timeSample.y);
+      var result = addTimePicker.getTimeFromCoordinates(timeSample.x, timeSample.y);
       expect(result.timeAsString).toEqual(timeSample.expectedTime);
     });
   });
@@ -60,13 +60,13 @@ describe('getTimeFromCoordinates parameterized test', function () {
 describe("clock functions", function () {
 
   it("getTime from clock center should not crash", function () {
-    expect(clockFunctions.getTimeFromCoordinates(0, 0).timeAsString).not.toBeUndefined();
-    expect(clockFunctions.getTimeFromCoordinates(0, 0).timeAsString).toEqual("12:00")
+    expect(addTimePicker.getTimeFromCoordinates(0, 0).timeAsString).not.toBeUndefined();
+    expect(addTimePicker.getTimeFromCoordinates(0, 0).timeAsString).toEqual("12:00")
   });
 
 
   it("can set a date to the selected time (PM)", function () {
-    var timeFromCoordinates = clockFunctions.getTimeFromCoordinates(10, -10);
+    var timeFromCoordinates = addTimePicker.getTimeFromCoordinates(10, -10);
     expect(timeFromCoordinates.timeAsString).toEqual("1:30")
     var date = new Date(2050, 0, 1);
     timeFromCoordinates.setToDate(date, true)
@@ -75,7 +75,7 @@ describe("clock functions", function () {
   })
 
   it("can set a date to the selected time (AM)", function () {
-    var timeFromCoordinates = clockFunctions.getTimeFromCoordinates(10, -10);
+    var timeFromCoordinates = addTimePicker.getTimeFromCoordinates(10, -10);
     expect(timeFromCoordinates.timeAsString).toEqual("1:30")
     var date = new Date(2050, 0, 1);
     timeFromCoordinates.setToDate(date, false)
@@ -84,7 +84,7 @@ describe("clock functions", function () {
   })
 
   it("can set a date to the selected time (high noon)", function () {
-    var timeFromCoordinates = clockFunctions.getTimeFromCoordinates(0, -80);
+    var timeFromCoordinates = addTimePicker.getTimeFromCoordinates(0, -80);
     expect(timeFromCoordinates.timeAsString).toEqual("12:00")
     var date = new Date(2050, 0, 1);
     timeFromCoordinates.setToDate(date, true)
@@ -93,7 +93,7 @@ describe("clock functions", function () {
   })
 
   it("can set a date to the selected time (midnight)", function () {
-    var timeFromCoordinates = clockFunctions.getTimeFromCoordinates(0, -80);
+    var timeFromCoordinates = addTimePicker.getTimeFromCoordinates(0, -80);
     expect(timeFromCoordinates.timeAsString).toEqual("12:00")
     var date = new Date(2050, 0, 1);
     timeFromCoordinates.setToDate(date, false)
@@ -103,7 +103,7 @@ describe("clock functions", function () {
 
 
   it("should calculate the coordinates for 1 o' clock (center: 50, 50)", function () {
-    var tickCoordinatesFor1 = clockFunctions.getTickCoordinates(50, 50, 50, 0);
+    var tickCoordinatesFor1 = addTimePicker.getTickCoordinates(50, 50, 50, 0);
     expect(tickCoordinatesFor1.x).toBeCloseTo(50, 0);
     expect(tickCoordinatesFor1.y).toBeCloseTo(0, 0);
   });
@@ -124,10 +124,9 @@ var nextIsPmParameters = [
 describe('guess PM for time', function () {
   nextIsPmParameters.forEach(function (param) {
     it('timeOld24=' + param.timeOld24 + ', timeNew12=' + param.timeNew12 + ' should be PM ' + param.expectedPM + ']', function () {
-      var timeOld24 = clockFunctions.parseTime(param.timeOld24)
-      var timeNew12 = clockFunctions.parseTime(param.timeNew12)
-//      var angle = clockFunctions.getAngleFromTime(timeNew12.hours ,timeNew12.minutes);
-      var timeObject = clockFunctions.getTimeFromCoordinates(10, 10);
+      var timeOld24 = addTimePicker.parseTime(param.timeOld24)
+      var timeNew12 = addTimePicker.parseTime(param.timeNew12)
+      var timeObject = addTimePicker.getTimeFromCoordinates(10, 10);
       var dateOld = new Date(1,1,200, timeOld24.hours, timeOld24.minutes, 0);
       var actualPM = timeObject.guessPM(dateOld, timeNew12.hours)
       expect(actualPM).toEqual(param.expectedPM);
@@ -153,7 +152,7 @@ var clockHourTicks = [
 describe('coordinates for hour ticks', function () {
   clockHourTicks.forEach(function (hour) {
     it('coordinates for ' + hour.time + ' should be about [' + hour.x + ', ' + hour.y + ']', function () {
-      var result = clockFunctions.getTickCoordinates(0, 0, 100, hour.time);
+      var result = addTimePicker.getTickCoordinates(0, 0, 100, hour.time);
       expect(result.x).toBeCloseTo(hour.x, 0);
       expect(result.y).toBeCloseTo(hour.y, 0);
     });
