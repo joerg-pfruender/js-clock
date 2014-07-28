@@ -4,8 +4,6 @@ body {
 
 .timepPickerPopUp {
     position: absolute;
-    /*top: 1000px;*/
-    /*left: 200px;*/
     text-align: center;
     padding: 5px;
     border: 1px solid black;

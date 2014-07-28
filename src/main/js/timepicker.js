@@ -10,7 +10,7 @@ var addTimePicker = {
     timeInput.onclick = function () {
       var rect = timeInput.getBoundingClientRect();
 
-      console.log(rect.top, rect.right, rect.bottom, rect.left);
+//      console.log(rect.top, rect.right, rect.bottom, rect.left);
 
       self.createTimePicker(rect.bottom, rect.left);
       self.createTimePickerCanvas(timeInput);
