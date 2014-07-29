@@ -12,23 +12,24 @@ var addTimePicker = {
 
 //      console.log(rect.top, rect.right, rect.bottom, rect.left);
 
-      self.createTimePicker(rect.bottom, rect.left);
+      self.createTimePickerPopup(rect.bottom, rect.left);
       self.createTimePickerCanvas(timeInput);
       this.numberOfCreatedTimePickers = this.numberOfCreatedTimePickers + 1;
 
     }
+
   },
 
-  createTimePicker: function (bottom, left) {
+  createTimePickerPopup: function (bottom, left) {
     var htmlSnippet = '<div class="timepPickerPopUp">\n' +
       '    <canvas id="timePickerCanvas' + this.numberOfCreatedTimePickers + '" width="160" height="160"></canvas><br>\n' +
       '<button onclick="this.parentNode.parentNode.removeChild(this.parentNode);">Close</button>\n' +
       '</div>';
 
-    var popup = this.createPopup(htmlSnippet)
+    var popup = this.createPopup(htmlSnippet);
     popup.style.top = bottom + " px";
     popup.style.left = left + " px";
-    popup.style.width = clockRadius + " px;"
+    popup.style.width = clockRadius + " px;";
     popup.style.height = (clockRadius + 20) + " px;"
   },
 
@@ -41,6 +42,7 @@ var addTimePicker = {
 
   createTimePickerCanvas: function (timeInput) {
 
+    var self = this;
 
     var timePickerCanvasMouseHandler = {
 
@@ -48,13 +50,13 @@ var addTimePicker = {
       offsetLeft: 0,
       offsetTop: 0,
 
-      handleEvent: function handleEvent(left, top) {
+//      handleEvent: function handleEvent(left, top) {
 //        console.log("left=" + left + ", top=" + top);
-
-      },
+//
+//      },
 
       doMouseDown: function (event) {
-        this.drag = true
+        this.drag = true;
         xPos = event.pageX;
         yPos = event.pageY;
 
@@ -86,7 +88,7 @@ var addTimePicker = {
       }
 
 
-    }
+    };
 
 
     var cumulativeOffset = function (element) {
@@ -107,14 +109,22 @@ var addTimePicker = {
     var timePickerCanvasContext = timePickerCanvas.getContext('2d');
     canvasClockPainter.paintClock(timePickerCanvasContext);
 
-    var timePickerCanvasOffset = cumulativeOffset(timePickerCanvas)
+    var timePickerCanvasOffset = cumulativeOffset(timePickerCanvas);
     //    console.log("timePickerCanvasOffset=" + timePickerCanvasOffset.top + ", " + timePickerCanvasOffset.left);
     timePickerCanvasMouseHandler.offsetLeft = timePickerCanvasOffset.left;
     timePickerCanvasMouseHandler.offsetTop = timePickerCanvasOffset.top;
 
     var initialDate = new Date();
-    initialDate.setHours(12)
-    initialDate.setMinutes(0)
+
+    if (timeInput.value) {
+      var parsedTime = this.parseTime(timeInput.value);
+      initialDate.setHours(parsedTime.hours);
+      initialDate.setMinutes(parsedTime.minutes);
+    }
+    else {
+      initialDate.setHours(12);
+      initialDate.setMinutes(0);
+    }
     var lastSelectedDate = initialDate;
 
     var lastSelectedTime;
@@ -129,14 +139,15 @@ var addTimePicker = {
         if (currentSelectedTime.date) {
           lastSelectedDate = currentSelectedTime.date;
         }
-        timeInput.value = currentSelectedTime.timeAsString24
-        canvasClockPainter.clearCanvas(timePickerCanvasContext)
-        canvasClockPainter.paintClock(timePickerCanvasContext)
-        canvasClockPainter.paintClockHand(timePickerCanvasContext, currentSelectedTime.hours, currentSelectedTime.minutes)
+        timeInput.value = currentSelectedTime.timeAsString24;
+        canvasClockPainter.clearCanvas(timePickerCanvasContext);
+        canvasClockPainter.paintClock(timePickerCanvasContext);
+        canvasClockPainter.paintClockHand(timePickerCanvasContext, currentSelectedTime.hours, currentSelectedTime.minutes);
       }
     };
 
-    canvasClockPainter.paintClockHand(timePickerCanvasContext, 12, 00)
+
+    canvasClockPainter.paintClockHand(timePickerCanvasContext, initialDate.getHours(), initialDate.getMinutes());
 
     timePickerCanvas.addEventListener("mousedown", function (event) {
       timePickerCanvasMouseHandler.doMouseDown(event);
@@ -150,6 +161,29 @@ var addTimePicker = {
     timePickerCanvas.addEventListener("mouseout", function (event) {
       timePickerCanvasMouseHandler.doMouseOut(event);
     }, false);
+
+
+    var onInputOld = timeInput.oninput;
+
+    if (!onInputOld) {
+      timeInput.oninput = function (event) {
+        var parsedTime2 = self.parseTime(timeInput.value);
+        canvasClockPainter.clearCanvas(timePickerCanvasContext);
+        canvasClockPainter.paintClock(timePickerCanvasContext);
+        canvasClockPainter.paintClockHand(timePickerCanvasContext, parsedTime2.hours, parsedTime2.minutes);
+      }
+    }
+    else {
+      timeInput.oninput = function (event) {
+        var parsedTime3 = self.parseTime(timeInput.value);
+        canvasClockPainter.clearCanvas(timePickerCanvasContext);
+        canvasClockPainter.paintClock(timePickerCanvasContext);
+        canvasClockPainter.paintClockHand(timePickerCanvasContext, parsedTime3.hours, parsedTime3.minutes);
+        onInputOld(event)
+      }
+    }
+
+    return timePickerCanvas;
 
   },
 
