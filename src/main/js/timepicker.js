@@ -139,7 +139,6 @@ var addTimePicker = {
 //    console.log("X=" + xPos + ", Y=" + yPos);
 
         this.handleEvent(xPos - this.offsetLeft, yPos - this.offsetTop);
-        event.preventDefault();
       },
 
       stopDrag: function () {
@@ -147,12 +146,10 @@ var addTimePicker = {
       },
       doMouseUp: function (event) {
         this.stopDrag();
-//        event.preventDefault();
       },
 
       doMouseOut: function (event) {
         this.stopDrag();
-//        event.preventDefault();
       },
 
       doMouseMove: function (event) {
@@ -163,7 +160,6 @@ var addTimePicker = {
 //      console.log("X=" + xPos + ", Y=" + yPos);
 
           this.handleEvent(xPos - this.offsetLeft, yPos - this.offsetTop);
-//          event.preventDefault();
         }
       }
 
@@ -228,6 +224,7 @@ var addTimePicker = {
 
     timePickerCanvas.addEventListener("mousedown", function (event) {
       timePickerCanvasMouseHandler.doMouseDown(event);
+      event.preventDefault();
     }, false);
     timePickerCanvas.addEventListener("mouseup", function (event) {
       timePickerCanvasMouseHandler.doMouseUp(event);
