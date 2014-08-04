@@ -224,7 +224,7 @@ var addTimePicker = {
 
     timePickerCanvas.addEventListener("mousedown", function (event) {
       timePickerCanvasMouseHandler.doMouseDown(event);
-      event.preventDefault();
+      event.preventDefault(); // would perform a blur event on the input element which would caus the popup to hide
     }, false);
     timePickerCanvas.addEventListener("mouseup", function (event) {
       timePickerCanvasMouseHandler.doMouseUp(event);
