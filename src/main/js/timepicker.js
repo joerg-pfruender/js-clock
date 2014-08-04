@@ -147,12 +147,12 @@ var addTimePicker = {
       },
       doMouseUp: function (event) {
         this.stopDrag();
-        event.preventDefault();
+//        event.preventDefault();
       },
 
       doMouseOut: function (event) {
         this.stopDrag();
-        event.preventDefault();
+//        event.preventDefault();
       },
 
       doMouseMove: function (event) {
@@ -163,7 +163,7 @@ var addTimePicker = {
 //      console.log("X=" + xPos + ", Y=" + yPos);
 
           this.handleEvent(xPos - this.offsetLeft, yPos - this.offsetTop);
-          event.preventDefault();
+//          event.preventDefault();
         }
       }
 
