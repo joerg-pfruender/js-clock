@@ -4,43 +4,69 @@ var addTimePicker = {
 
   numberOfCreatedTimePickers: 0,
 
-  to: function (timeInput) {
+  defaultConfig: {
+    clockRadius: 80
+  },
+
+  to: function (timeInput, configOptional) {
 
     var self = this;
     timeInput.onclick = function () {
-      var rect = timeInput.getBoundingClientRect();
 
-//      console.log(rect.top, rect.right, rect.bottom, rect.left);
-
-      self.createTimePickerPopup(rect.bottom, rect.left);
-      self.createTimePickerCanvas(timeInput);
-      this.numberOfCreatedTimePickers = this.numberOfCreatedTimePickers + 1;
-
+      self.createTimePicker(timeInput, configOptional);
     }
 
   },
 
-  createTimePickerPopup: function (bottom, left) {
-    var htmlSnippet = '<div class="timepPickerPopUp">\n' +
-      '    <canvas id="timePickerCanvas' + this.numberOfCreatedTimePickers + '" width="160" height="160"></canvas><br>\n' +
-      '<button onclick="this.parentNode.parentNode.removeChild(this.parentNode);">Close</button>\n' +
-      '</div>';
+  createTimePicker: function (timeInput, configOptional) {
+    var self = this;
+    var currentConfig;
+    if (configOptional) {
+      currentConfig = configOptional;
+    }
+    else {
+      currentConfig = self.defaultConfig;
+    }
 
-    var popup = this.createPopup(htmlSnippet);
-    popup.style.top = bottom + " px";
-    popup.style.left = left + " px";
-    popup.style.width = clockRadius + " px;";
-    popup.style.height = (clockRadius + 20) + " px;"
+    self.numberOfCreatedTimePickers = self.numberOfCreatedTimePickers + 1;
+
+    var currentTimePickerId = self.numberOfCreatedTimePickers;
+    var currentClockRadius = currentConfig.clockRadius;
+
+
+    var timeInputRect = timeInput.getBoundingClientRect();
+    var timeInputZIndexOld = timeInput.style.zIndex;
+
+    var createPopup = function (popUpHtmlCodeSnippet) {
+      var div = document.createElement('div');
+      div.innerHTML = popUpHtmlCodeSnippet;
+      document.body.appendChild(div.firstChild);
+      return div;
+    };
+
+    var createTimePickerPopup = function (bottom, left) {
+
+      var widthAndHeight = currentClockRadius * 2;
+      var htmlSnippet = '<div class="timepPickerPopUp">\n' +
+        '    <canvas id="timePickerCanvas' + currentTimePickerId + '" width="' + widthAndHeight + '" height="' + widthAndHeight + '"></canvas><br>\n' +
+        '<button onclick="this.parentNode.parentNode.removeChild(this.parentNode);">Close</button>\n' +
+        '</div>';
+
+      var popup = createPopup(htmlSnippet);
+      popup.style.top = bottom + " px";
+      popup.style.left = left + " px";
+      popup.style.width = widthAndHeight + " px;";
+      popup.style.height = (widthAndHeight + 20) + " px;"
+    };
+
+    //      console.log(timeInputRect.top, timeInputRect.right, timeInputRect.bottom, timeInputRect.left);
+
+    createTimePickerPopup(timeInputRect.bottom, timeInputRect.left);
+    self.createTimePickerCanvas(timeInput, currentConfig, currentTimePickerId);
   },
 
-  createPopup: function (popUpCode) {
-    var div = document.createElement('div');
-    div.innerHTML = popUpCode;
-    document.body.appendChild(div.firstChild);
-    return div;
-  },
 
-  createTimePickerCanvas: function (timeInput) {
+  createTimePickerCanvas: function (timeInput, currentConfig, currentTimePickerId) {
 
     var self = this;
 
@@ -105,9 +131,8 @@ var addTimePicker = {
       };
     };
 
-    var timePickerCanvas = document.getElementById('timePickerCanvas' + this.numberOfCreatedTimePickers);
+    var timePickerCanvas = document.getElementById('timePickerCanvas' + currentTimePickerId);
     var timePickerCanvasContext = timePickerCanvas.getContext('2d');
-    canvasClockPainter.paintClock(timePickerCanvasContext);
 
     var timePickerCanvasOffset = cumulativeOffset(timePickerCanvas);
     //    console.log("timePickerCanvasOffset=" + timePickerCanvasOffset.top + ", " + timePickerCanvasOffset.left);
@@ -131,8 +156,8 @@ var addTimePicker = {
 
     timePickerCanvasMouseHandler.handleEvent = function handleEvent(offsetFromLeft, offsetFromTop) {
 //  console.log("timePickerCanvasOffset from Left=" + offsetFromLeft + ", timePickerCanvasOffset from Top=" + offsetFromTop);
-      var numberOfPixelsRightFromCenter = offsetFromLeft - clockRadius;
-      var numberOfPixelsBottomFromCenter = offsetFromTop - clockRadius;
+      var numberOfPixelsRightFromCenter = offsetFromLeft - currentConfig.clockRadius;
+      var numberOfPixelsBottomFromCenter = offsetFromTop - currentConfig.clockRadius;
       var currentSelectedTime = addTimePicker.getTimeFromCoordinates(numberOfPixelsRightFromCenter, numberOfPixelsBottomFromCenter, lastSelectedDate);
       if (!lastSelectedTime || currentSelectedTime.timeAsString != lastSelectedTime.timeAsString) {
         lastSelectedTime = currentSelectedTime;
@@ -140,14 +165,12 @@ var addTimePicker = {
           lastSelectedDate = currentSelectedTime.date;
         }
         timeInput.value = currentSelectedTime.timeAsString24;
-        canvasClockPainter.clearCanvas(timePickerCanvasContext);
-        canvasClockPainter.paintClock(timePickerCanvasContext);
-        canvasClockPainter.paintClockHand(timePickerCanvasContext, currentSelectedTime.hours, currentSelectedTime.minutes);
+        self.canvasClockPainter.repaintClockWithContent(timePickerCanvasContext, currentConfig, currentSelectedTime.hours, currentSelectedTime.minutes);
       }
     };
 
 
-    canvasClockPainter.paintClockHand(timePickerCanvasContext, initialDate.getHours(), initialDate.getMinutes());
+    self.canvasClockPainter.repaintClockWithContent(timePickerCanvasContext, currentConfig, initialDate.getHours(), initialDate.getMinutes());
 
     timePickerCanvas.addEventListener("mousedown", function (event) {
       timePickerCanvasMouseHandler.doMouseDown(event);
@@ -168,17 +191,13 @@ var addTimePicker = {
     if (!onInputOld) {
       timeInput.oninput = function (event) {
         var parsedTime2 = self.parseTime(timeInput.value);
-        canvasClockPainter.clearCanvas(timePickerCanvasContext);
-        canvasClockPainter.paintClock(timePickerCanvasContext);
-        canvasClockPainter.paintClockHand(timePickerCanvasContext, parsedTime2.hours, parsedTime2.minutes);
+        self.canvasClockPainter.repaintClockWithContent(timePickerCanvasContext, currentConfig, parsedTime2.hours, parsedTime2.minutes);
       }
     }
     else {
       timeInput.oninput = function (event) {
         var parsedTime3 = self.parseTime(timeInput.value);
-        canvasClockPainter.clearCanvas(timePickerCanvasContext);
-        canvasClockPainter.paintClock(timePickerCanvasContext);
-        canvasClockPainter.paintClockHand(timePickerCanvasContext, parsedTime3.hours, parsedTime3.minutes);
+        self.canvasClockPainter.repaintClockWithContent(timePickerCanvasContext, currentConfig, parsedTime3.hours, parsedTime3.minutes);
         onInputOld(event)
       }
     }
@@ -621,66 +640,71 @@ var addTimePicker = {
   getTickCoordinates: function (centerX, centerY, radius, hours, minutesOptional) {
     var angleInRad = this.getAngleFromTime(hours, minutesOptional);
     return this.getPoint(centerX, centerY, radius, angleInRad);
-  }
-};
-
-var canvasClockPainter = {
-
-
-  radius: clockRadius,
-  width: 2 * clockRadius,
-  centerX: clockRadius,
-  centerY: clockRadius,
-  innerCircleTickRadius: clockRadius - (clockRadius / 10) - 1,
-
-
-  paintBackground: function (canvasContext) {
-    canvasContext.fillStyle = "rgba(255, 255, 255, 0.5)";
-    canvasContext.arc(this.radius, this.radius, this.radius - 1, 0, Math.PI * 2, true);
-    canvasContext.fill();
   },
 
-  getTickCoordinates: function (radius, hours, optionalMinutes) {
-    return addTimePicker.getTickCoordinates(this.centerX, this.centerY, radius, hours, optionalMinutes);
-  },
+  canvasClockPainter: {
+
+    repaintClockWithContent: function (canvasContext, config, hours, minutes) {
+
+      var clockRadius = config.clockRadius;
+      var width = 2 * clockRadius;
+      var centerX = clockRadius;
+      var centerY = clockRadius;
+      var innerCircleTickRadius = clockRadius - (clockRadius / 10) - 1;
+
+      var paintBackground = function () {
+        canvasContext.fillStyle = "rgba(255, 255, 255, 0.5)";
+        canvasContext.arc(clockRadius, clockRadius, clockRadius - 1, 0, Math.PI * 2, true);
+        canvasContext.fill();
+      };
 
 
-  paintClock: function (timePickerCanvasContext) {
+      var getTickCoordinates = function (innerOrOuterCircleRadius, currentHours, currentMinutesOptional) {
+        return addTimePicker.getTickCoordinates(centerX, centerY, innerOrOuterCircleRadius, currentHours, currentMinutesOptional);
+      }
 
-    var radius = this.radius;
+      var paintClock = function () {
 
-    this.paintBackground(timePickerCanvasContext);
+        var radius = this.radius;
 
-    timePickerCanvasContext.strokeStyle = "rgb(0,0,0)";   // black
-    timePickerCanvasContext.beginPath();
-    timePickerCanvasContext.arc(radius, radius, radius - 1, 0, Math.PI * 2, true);
-    timePickerCanvasContext.fill();
-    timePickerCanvasContext.stroke();
+        paintBackground();
 
-    var outerCircleTickRadius = this.radius - 1;
+        canvasContext.strokeStyle = "rgb(0,0,0)";   // black
+        canvasContext.beginPath();
+        canvasContext.arc(clockRadius, clockRadius, clockRadius - 1, 0, Math.PI * 2, true);
+        canvasContext.fill();
+        canvasContext.stroke();
 
-    for (var hour = 0; hour < 12; hour++) {
-      var startHourTick = this.getTickCoordinates(outerCircleTickRadius, hour);
-      var endHourTick = this.getTickCoordinates(this.innerCircleTickRadius, hour);
-      timePickerCanvasContext.beginPath();
-      //console.log("from [" + startHourTick.x + "," + startHourTick.y + "] to  [" + endHourTick.x + ", " + endHourTick.y + "]");
-      timePickerCanvasContext.moveTo(startHourTick.x, startHourTick.y);
-      timePickerCanvasContext.lineTo(endHourTick.x, endHourTick.y);
-      timePickerCanvasContext.stroke();
+        var outerCircleTickRadius = clockRadius - 1;
 
+        for (var hour = 0; hour < 12; hour++) {
+          var startHourTick = getTickCoordinates(outerCircleTickRadius, hour);
+          var endHourTick = getTickCoordinates(innerCircleTickRadius, hour);
+          canvasContext.beginPath();
+          //console.log("from [" + startHourTick.x + "," + startHourTick.y + "] to  [" + endHourTick.x + ", " + endHourTick.y + "]");
+          canvasContext.moveTo(startHourTick.x, startHourTick.y);
+          canvasContext.lineTo(endHourTick.x, endHourTick.y);
+          canvasContext.stroke();
+
+        }
+      }
+
+      var paintClockHand = function (hours, minutes) {
+        var endOfClockHand = getTickCoordinates(innerCircleTickRadius - 2, hours, minutes);
+        canvasContext.beginPath();
+        canvasContext.moveTo(centerX, centerY);
+        canvasContext.lineTo(endOfClockHand.x, endOfClockHand.y);
+        canvasContext.stroke();
+      }
+
+      var clearCanvas = function () {
+        canvasContext.clearRect(0, 0, width, width);
+      }
+
+      clearCanvas();
+      paintClock();
+      paintClockHand(hours, minutes);
     }
-  },
 
-  paintClockHand: function (timePickerCanvasContext, hours, minutes) {
-    var endOfClockHand = this.getTickCoordinates(this.innerCircleTickRadius - 2, hours, minutes);
-    timePickerCanvasContext.beginPath();
-    timePickerCanvasContext.moveTo(this.centerX, this.centerY);
-    timePickerCanvasContext.lineTo(endOfClockHand.x, endOfClockHand.y);
-    timePickerCanvasContext.stroke();
-  },
-
-  clearCanvas: function (canvasContext) {
-    canvasContext.clearRect(0, 0, this.width, this.width);
   }
-
 };
