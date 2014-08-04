@@ -1,22 +1,26 @@
-var clockRadius = 80;
-
 var addTimePicker = {
-
-  numberOfCreatedTimePickers: 0,
 
   defaultConfig: {
     clockRadius: 80
   },
 
+  /**
+   * entry function
+   * @param timeInput html-input element with time format HH:MM where the hours are in 24-hour style
+   * @param configOptional optiona: if not given the default config will be used
+   */
   to: function (timeInput, configOptional) {
 
     var self = this;
-    timeInput.onclick = function () {
 
+    timeInput.onclick = function () {
+//      console.log("click on time input ")
       self.createTimePicker(timeInput, configOptional);
     }
 
   },
+
+  numberOfCreatedTimePickers: 0,
 
   createTimePicker: function (timeInput, configOptional) {
     var self = this;
@@ -35,7 +39,10 @@ var addTimePicker = {
 
 
     var timeInputRect = timeInput.getBoundingClientRect();
-    var timeInputZIndexOld = timeInput.style.zIndex;
+//    var timeInputZIndexOld = timeInput.style.zIndex;
+//    var timeInputTopOld = timeInput.style.top;
+//    var timeInputLeftOld = timeInput.style.left;
+//    var timeInputPositionOld = timeInput.style.position;
 
     var createPopup = function (popUpHtmlCodeSnippet) {
       var div = document.createElement('div');
@@ -44,25 +51,59 @@ var addTimePicker = {
       return div;
     };
 
+
     var createTimePickerPopup = function (bottom, left) {
 
       var widthAndHeight = currentClockRadius * 2;
-      var htmlSnippet = '<div class="timepPickerPopUp">\n' +
+      var popupHtmlSnippet = '<div class="timepPickerPopUp" id="timepPickerPopUp" style=" position: absolute; z-index:1002 ">\n' +
         '    <canvas id="timePickerCanvas' + currentTimePickerId + '" width="' + widthAndHeight + '" height="' + widthAndHeight + '"></canvas><br>\n' +
-        '<button onclick="this.parentNode.parentNode.removeChild(this.parentNode);">Close</button>\n' +
+//        '<button onclick="this.parentNode.parentNode.removeChild(this.parentNode);">Close</button>\n' +
         '</div>';
 
-      var popup = createPopup(htmlSnippet);
-      popup.style.top = bottom + " px";
-      popup.style.left = left + " px";
-      popup.style.width = widthAndHeight + " px;";
-      popup.style.height = (widthAndHeight + 20) + " px;"
+      var timePickerPopup = createPopup(popupHtmlSnippet);
+      timePickerPopup.style.top = bottom + " px";
+      timePickerPopup.style.left = left + " px";
+      timePickerPopup.style.width = widthAndHeight + " px;";
+      timePickerPopup.style.height = (widthAndHeight + 20) + " px;";
+
+      return document.getElementById("timepPickerPopUp");
     };
 
     //      console.log(timeInputRect.top, timeInputRect.right, timeInputRect.bottom, timeInputRect.left);
 
-    createTimePickerPopup(timeInputRect.bottom, timeInputRect.left);
+    var timePickerPopup = createTimePickerPopup(timeInputRect.bottom, timeInputRect.left);
     self.createTimePickerCanvas(timeInput, currentConfig, currentTimePickerId);
+    /*timeInput.style.zIndex = 1001;
+    timeInput.style.position = "absolute"
+    timeInput.style.top = timeInputRect.top;
+    timeInput.style.left = timeInputRect.left;*/
+
+    var glassPaneHtmlSnippet = '<div id="timePickerGlassPane" style=" position: absolute ; top: 0px ; left:0px ; z-index:1000 ; width: 100%; height: 100%;"></div>';
+    createPopup(glassPaneHtmlSnippet);
+
+    var timePickerGlassPane = document.getElementById("timePickerGlassPane");
+
+    var removeTimePicker = function () {
+      timePickerPopup.parentNode.removeChild(timePickerPopup);
+      timePickerGlassPane.parentNode.removeChild(timePickerGlassPane);
+     /* timeInput.style.zIndex = timeInputZIndexOld;
+      timeInput.style.top = timeInputTopOld;
+      timeInput.style.left = timeInputLeftOld;
+      timeInput.style.position = timeInputPositionOld;*/
+    }
+
+    timePickerGlassPane.onclick = function (event) {
+//      console.log("click target " + event.target)
+//      if (event.target == timeInput) {
+//        console.log("click on time input")
+//      }
+//      else {
+//        console.log("click on glass pane")
+        removeTimePicker();
+//      }
+    };
+
+
   },
 
 
