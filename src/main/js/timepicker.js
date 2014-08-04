@@ -13,6 +13,10 @@ var addTimePicker = {
 
     var self = this;
 
+    if (!this.isCanvasSupported) {
+      return;
+    }
+
     timeInput.onclick = function (event) {
 //      console.log("click on time input ")
       self.createTimePicker(timeInput, configOptional);
@@ -114,6 +118,14 @@ var addTimePicker = {
 
 
   },
+
+
+  isCanvasSupported : function(){
+    var elem = document.createElement('canvas');
+    return !!(elem.getContext && elem.getContext('2d'));
+  }(),
+
+
 
 
   createTimePickerCanvas: function (timeInput, currentConfig, currentTimePickerId) {
