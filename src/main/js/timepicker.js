@@ -13,9 +13,10 @@ var addTimePicker = {
 
     var self = this;
 
-    timeInput.onclick = function () {
+    timeInput.onclick = function (event) {
 //      console.log("click on time input ")
       self.createTimePicker(timeInput, configOptional);
+      event.preventDefault();
     }
 
   },
@@ -84,12 +85,20 @@ var addTimePicker = {
     var timePickerGlassPane = document.getElementById("timePickerGlassPane");
 
     var removeTimePicker = function () {
-      timePickerPopup.parentNode.removeChild(timePickerPopup);
-      timePickerGlassPane.parentNode.removeChild(timePickerGlassPane);
+      if (timePickerPopup && timePickerPopup.parentNode) {
+        timePickerPopup.parentNode.removeChild(timePickerPopup);
+      }
+      if (timePickerGlassPane && timePickerGlassPane.parentNode) {
+        timePickerGlassPane.parentNode.removeChild(timePickerGlassPane);
+      }
       /* timeInput.style.zIndex = timeInputZIndexOld;
        timeInput.style.top = timeInputTopOld;
        timeInput.style.left = timeInputLeftOld;
        timeInput.style.position = timeInputPositionOld;*/
+    }
+
+    timeInput.onblur = function (event) {
+      removeTimePicker();
     }
 
     timePickerGlassPane.onclick = function (event) {
@@ -130,6 +139,7 @@ var addTimePicker = {
 //    console.log("X=" + xPos + ", Y=" + yPos);
 
         this.handleEvent(xPos - this.offsetLeft, yPos - this.offsetTop);
+        event.preventDefault();
       },
 
       stopDrag: function () {
@@ -137,10 +147,12 @@ var addTimePicker = {
       },
       doMouseUp: function (event) {
         this.stopDrag();
+        event.preventDefault();
       },
 
       doMouseOut: function (event) {
         this.stopDrag();
+        event.preventDefault();
       },
 
       doMouseMove: function (event) {
@@ -151,6 +163,7 @@ var addTimePicker = {
 //      console.log("X=" + xPos + ", Y=" + yPos);
 
           this.handleEvent(xPos - this.offsetLeft, yPos - this.offsetTop);
+          event.preventDefault();
         }
       }
 
