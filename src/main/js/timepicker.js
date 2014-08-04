@@ -74,9 +74,9 @@ var addTimePicker = {
     var timePickerPopup = createTimePickerPopup(timeInputRect.bottom, timeInputRect.left);
     self.createTimePickerCanvas(timeInput, currentConfig, currentTimePickerId);
     /*timeInput.style.zIndex = 1001;
-    timeInput.style.position = "absolute"
-    timeInput.style.top = timeInputRect.top;
-    timeInput.style.left = timeInputRect.left;*/
+     timeInput.style.position = "absolute"
+     timeInput.style.top = timeInputRect.top;
+     timeInput.style.left = timeInputRect.left;*/
 
     var glassPaneHtmlSnippet = '<div id="timePickerGlassPane" style=" position: absolute ; top: 0px ; left:0px ; z-index:1000 ; width: 100%; height: 100%;"></div>';
     createPopup(glassPaneHtmlSnippet);
@@ -86,10 +86,10 @@ var addTimePicker = {
     var removeTimePicker = function () {
       timePickerPopup.parentNode.removeChild(timePickerPopup);
       timePickerGlassPane.parentNode.removeChild(timePickerGlassPane);
-     /* timeInput.style.zIndex = timeInputZIndexOld;
-      timeInput.style.top = timeInputTopOld;
-      timeInput.style.left = timeInputLeftOld;
-      timeInput.style.position = timeInputPositionOld;*/
+      /* timeInput.style.zIndex = timeInputZIndexOld;
+       timeInput.style.top = timeInputTopOld;
+       timeInput.style.left = timeInputLeftOld;
+       timeInput.style.position = timeInputPositionOld;*/
     }
 
     timePickerGlassPane.onclick = function (event) {
@@ -99,7 +99,7 @@ var addTimePicker = {
 //      }
 //      else {
 //        console.log("click on glass pane")
-        removeTimePicker();
+      removeTimePicker();
 //      }
     };
 
@@ -225,7 +225,21 @@ var addTimePicker = {
     timePickerCanvas.addEventListener("mouseout", function (event) {
       timePickerCanvasMouseHandler.doMouseOut(event);
     }, false);
-
+    timePickerCanvas.addEventListener("touchstart", function (event) {
+      timePickerCanvasMouseHandler.doMouseDown(event);
+    }, false);
+    timePickerCanvas.addEventListener("touchend", function (event) {
+      timePickerCanvasMouseHandler.doMouseUp(event);
+    }, false);
+    timePickerCanvas.addEventListener("touchcancel", function (event) {
+      timePickerCanvasMouseHandler.doMouseOut(event);
+    }, false);
+    timePickerCanvas.addEventListener("touchleave", function (event) {
+      timePickerCanvasMouseHandler.doMouseOut(event);
+    }, false);
+    timePickerCanvas.addEventListener("touchmove", function (event) {
+      timePickerCanvasMouseHandler.doMouseMove(event);
+    }, false);
 
     var onInputOld = timeInput.oninput;
 
