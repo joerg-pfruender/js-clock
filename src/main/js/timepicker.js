@@ -267,15 +267,19 @@ var addTimePicker = {
     }, false);
     timePickerCanvas.addEventListener("touchend", function (event) {
       timePickerCanvasMouseHandler.doMouseUp(event);
+      event.preventDefault();
     }, false);
     timePickerCanvas.addEventListener("touchcancel", function (event) {
       timePickerCanvasMouseHandler.doTouchCancel(event);
+      event.preventDefault();
     }, false);
     timePickerCanvas.addEventListener("touchleave", function (event) {
       timePickerCanvasMouseHandler.doTouchLeave(event);
+      event.preventDefault();
     }, false);
     timePickerCanvas.addEventListener("doTouchMove", function (event) {
       timePickerCanvasMouseHandler.doTouchMove(event);
+      event.preventDefault();
     }, false);
 
     var onInputOld = timeInput.oninput;
