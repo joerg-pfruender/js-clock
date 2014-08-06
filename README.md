@@ -13,7 +13,7 @@ You can get an impression of my intention on http://htmlpreview.github.io/?https
 Next TODOs:
 -----------
 
-* test again with internet explorer
+* fix bug in internet explorer: click on the "x" to delete the time input value, is not captured -> the popup stays on the page
 * improve handling for mobile devices
 * make it work with other html input types: date-time, local-date-time, untyped
 

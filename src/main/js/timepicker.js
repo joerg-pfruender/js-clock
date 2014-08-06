@@ -120,12 +120,10 @@ var addTimePicker = {
   },
 
 
-  isCanvasSupported : function(){
+  isCanvasSupported: function () {
     var elem = document.createElement('canvas');
     return !!(elem.getContext && elem.getContext('2d'));
   }(),
-
-
 
 
   createTimePickerCanvas: function (timeInput, currentConfig, currentTimePickerId) {
@@ -138,19 +136,29 @@ var addTimePicker = {
       offsetLeft: 0,
       offsetTop: 0,
 
-//      handleEvent: function handleEvent(left, top) {
-//        console.log("left=" + left + ", top=" + top);
-//
-//      },
-
       doMouseDown: function (event) {
         this.drag = true;
-        xPos = event.pageX;
-        yPos = event.pageY;
-
-//    console.log("X=" + xPos + ", Y=" + yPos);
-
+        var xPos = event.pageX;
+        var yPos = event.pageY;
         this.handleEvent(xPos - this.offsetLeft, yPos - this.offsetTop);
+      },
+
+      doTouchStart: function (event) {
+        this.drag = true;
+        var touchobj = event.changedTouches[0];
+        var xPos = parseInt(touchobj.clientX);
+        var yPos = parseInt(touchobj.clientY);
+        this.handleEvent(xPos - this.offsetLeft, yPos - this.offsetTop);
+        ;
+      },
+
+      doTouchMove: function (event) {
+        if (this.drag) {
+          var touchobj = event.changedTouches[0];
+          var xPos = parseInt(touchobj.clientX);
+          var yPos = parseInt(touchobj.clientY);
+          this.handleEvent(xPos - this.offsetLeft, yPos - this.offsetTop);
+        }
       },
 
       stopDrag: function () {
@@ -164,12 +172,18 @@ var addTimePicker = {
         this.stopDrag();
       },
 
+      doTouchCancel: function (event) {
+        this.stopDrag();
+      },
+
+      doTouchLeave: function (event) {
+        this.stopDrag();
+      },
+
       doMouseMove: function (event) {
         if (this.drag) {
-          xPos = event.pageX;
-          yPos = event.pageY;
-
-//      console.log("X=" + xPos + ", Y=" + yPos);
+          var xPos = event.pageX;
+          var yPos = event.pageY;
 
           this.handleEvent(xPos - this.offsetLeft, yPos - this.offsetTop);
         }
@@ -236,7 +250,7 @@ var addTimePicker = {
 
     timePickerCanvas.addEventListener("mousedown", function (event) {
       timePickerCanvasMouseHandler.doMouseDown(event);
-      event.preventDefault(); // would perform a blur event on the input element which would caus the popup to hide
+      event.preventDefault(); // would perform a blur event on the input element which would cause the popup to hide
     }, false);
     timePickerCanvas.addEventListener("mouseup", function (event) {
       timePickerCanvasMouseHandler.doMouseUp(event);
@@ -247,20 +261,21 @@ var addTimePicker = {
     timePickerCanvas.addEventListener("mouseout", function (event) {
       timePickerCanvasMouseHandler.doMouseOut(event);
     }, false);
-    timePickerCanvas.addEventListener("touchstart", function (event) {
-      timePickerCanvasMouseHandler.doMouseDown(event);
+    timePickerCanvas.addEventListener("doTouchStart", function (event) {
+      timePickerCanvasMouseHandler.doTouchStart(event);
+      event.preventDefault(); // would perform a blur event on the input element which would cause the popup to hide
     }, false);
     timePickerCanvas.addEventListener("touchend", function (event) {
       timePickerCanvasMouseHandler.doMouseUp(event);
     }, false);
     timePickerCanvas.addEventListener("touchcancel", function (event) {
-      timePickerCanvasMouseHandler.doMouseOut(event);
+      timePickerCanvasMouseHandler.doTouchCancel(event);
     }, false);
     timePickerCanvas.addEventListener("touchleave", function (event) {
-      timePickerCanvasMouseHandler.doMouseOut(event);
+      timePickerCanvasMouseHandler.doTouchLeave(event);
     }, false);
-    timePickerCanvas.addEventListener("touchmove", function (event) {
-      timePickerCanvasMouseHandler.doMouseMove(event);
+    timePickerCanvas.addEventListener("doTouchMove", function (event) {
+      timePickerCanvasMouseHandler.doTouchMove(event);
     }, false);
 
     var onInputOld = timeInput.oninput;
