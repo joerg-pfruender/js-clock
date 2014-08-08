@@ -1,7 +1,10 @@
 var addTimePicker = {
 
   defaultConfig: {
-    clockRadius: 80
+    clockRadius: 80,
+    popupPadding: "5px",
+    popupBorder: "1px solid black",
+    popupBackground: "white"
   },
 
   /**
@@ -18,7 +21,6 @@ var addTimePicker = {
     }
 
     timeInput.onclick = function (event) {
-//      console.log("click on time input ")
       self.createTimePicker(timeInput, configOptional);
       event.preventDefault();
     }
@@ -32,6 +34,18 @@ var addTimePicker = {
     var currentConfig;
     if (configOptional) {
       currentConfig = configOptional;
+      if (!currentConfig.clockRadius) {
+        currentConfig.clockRadius = self.defaultConfig.clockRadius;
+      }
+      if (!currentConfig.popupPadding) {
+        currentConfig.popupPadding = self.defaultConfig.popupPadding;
+      }
+      if (!currentConfig.popupBorder) {
+        currentConfig.popupBorder = self.defaultConfig.popupBorder;
+      }
+      if (!currentConfig.popupBackground) {
+        currentConfig.popupBackground = self.defaultConfig.popupBackground;
+      }
     }
     else {
       currentConfig = self.defaultConfig;
@@ -44,10 +58,6 @@ var addTimePicker = {
 
 
     var timeInputRect = timeInput.getBoundingClientRect();
-//    var timeInputZIndexOld = timeInput.style.zIndex;
-//    var timeInputTopOld = timeInput.style.top;
-//    var timeInputLeftOld = timeInput.style.left;
-//    var timeInputPositionOld = timeInput.style.position;
 
     var createPopup = function (popUpHtmlCodeSnippet) {
       var div = document.createElement('div');
@@ -57,36 +67,32 @@ var addTimePicker = {
     };
 
 
-    var createTimePickerPopup = function (bottom, left) {
+    var createTimePickerPopup = function (popupTop, popupLeft) {
 
       var widthAndHeight = currentClockRadius * 2;
-      var popupHtmlSnippet = '<div class="timepPickerPopUp" id="timepPickerPopUp" style=" position: absolute; z-index:1002 ">\n' +
-        '    <canvas id="timePickerCanvas' + currentTimePickerId + '" width="' + widthAndHeight + '" height="' + widthAndHeight + '"></canvas><br>\n' +
-//        '<button onclick="this.parentNode.parentNode.removeChild(this.parentNode);">Close</button>\n' +
+      var popupHtmlSnippet = '<div id="joergPfruenderTimepPickerPopUp" style=" position: absolute; z-index:1002 ; padding : ' + currentConfig.popupPadding + '; border: ' + currentConfig.popupBorder + '; background : ' + currentConfig.popupBackground + ' ">\n' +
+
+        '    <canvas id="joergPfruenderTimePickerCanvas' + currentTimePickerId + '" width="' + widthAndHeight + '" height="' + widthAndHeight + '" style="cursor:pointer"></canvas><br>\n' +
+        '<button id="timePickerPopupCloseButton" style="position: absolute; top: 0px; right: 0px "' +
+        '>x</button>\n' +
         '</div>';
 
       var timePickerPopup = createPopup(popupHtmlSnippet);
-      timePickerPopup.style.top = bottom + " px";
-      timePickerPopup.style.left = left + " px";
+      timePickerPopup.style.top = popupTop + " px";
+      timePickerPopup.style.left = popupLeft + " px";
       timePickerPopup.style.width = widthAndHeight + " px;";
       timePickerPopup.style.height = (widthAndHeight + 20) + " px;";
 
-      return document.getElementById("timepPickerPopUp");
+      return document.getElementById("joergPfruenderTimepPickerPopUp");
     };
-
-    //      console.log(timeInputRect.top, timeInputRect.right, timeInputRect.bottom, timeInputRect.left);
 
     var timePickerPopup = createTimePickerPopup(timeInputRect.bottom, timeInputRect.left);
     self.createTimePickerCanvas(timeInput, currentConfig, currentTimePickerId);
-    /*timeInput.style.zIndex = 1001;
-     timeInput.style.position = "absolute"
-     timeInput.style.top = timeInputRect.top;
-     timeInput.style.left = timeInputRect.left;*/
 
-    var glassPaneHtmlSnippet = '<div id="timePickerGlassPane" style=" position: absolute ; top: 0px ; left:0px ; z-index:1000 ; width: 100%; height: 100%;"></div>';
+    var glassPaneHtmlSnippet = '<div id="joergPfruenderTimePickerGlassPane" style=" position: absolute ; top: 0px ; left:0px ; z-index:1000 ; width: 100%; height: 100%;"></div>';
     createPopup(glassPaneHtmlSnippet);
 
-    var timePickerGlassPane = document.getElementById("timePickerGlassPane");
+    var timePickerGlassPane = document.getElementById("joergPfruenderTimePickerGlassPane");
 
     var removeTimePicker = function () {
       if (timePickerPopup && timePickerPopup.parentNode) {
@@ -95,10 +101,6 @@ var addTimePicker = {
       if (timePickerGlassPane && timePickerGlassPane.parentNode) {
         timePickerGlassPane.parentNode.removeChild(timePickerGlassPane);
       }
-      /* timeInput.style.zIndex = timeInputZIndexOld;
-       timeInput.style.top = timeInputTopOld;
-       timeInput.style.left = timeInputLeftOld;
-       timeInput.style.position = timeInputPositionOld;*/
     }
 
     timeInput.onblur = function (event) {
@@ -106,15 +108,12 @@ var addTimePicker = {
     }
 
     timePickerGlassPane.onclick = function (event) {
-//      console.log("click target " + event.target)
-//      if (event.target == timeInput) {
-//        console.log("click on time input")
-//      }
-//      else {
-//        console.log("click on glass pane")
       removeTimePicker();
-//      }
     };
+
+    document.getElementById("timePickerPopupCloseButton").onclick = function (event) {
+      removeTimePicker();
+    }
 
 
   },
@@ -207,7 +206,7 @@ var addTimePicker = {
       };
     };
 
-    var timePickerCanvas = document.getElementById('timePickerCanvas' + currentTimePickerId);
+    var timePickerCanvas = document.getElementById('joergPfruenderTimePickerCanvas' + currentTimePickerId);
     var timePickerCanvasContext = timePickerCanvas.getContext('2d');
 
     var timePickerCanvasOffset = cumulativeOffset(timePickerCanvas);
