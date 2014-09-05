@@ -8,12 +8,12 @@ That's why I tried to create an easy-to-use input element for time.
 You can select the time by dragging the clock hand around with your mouse.
 
 
-You can get an impression of my intention on http://htmlpreview.github.io/?https://github.com/joerg-pfruender/js-clock/blob/master/src/test/timepickertestharness.html
+You can get an impression of my intention on http://htmlpreview.github.io/?https://github.com/joerg-pfruender/js-clock/blob/master/src/test/timepickertestharness.html (preview does not work in Internet Explorer)
 
 Next TODOs:
 -----------
 
-* improve handling for mobile devices
+* update pixel position calculation for time on zoom
 * make it work with other html input types: date-time, local-date-time, untyped
 
 What won't be done

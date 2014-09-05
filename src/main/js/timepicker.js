@@ -260,7 +260,7 @@ var addTimePicker = {
     timePickerCanvas.addEventListener("mouseout", function (event) {
       timePickerCanvasMouseHandler.doMouseOut(event);
     }, false);
-    timePickerCanvas.addEventListener("doTouchStart", function (event) {
+    timePickerCanvas.addEventListener("touchstart", function (event) {
       timePickerCanvasMouseHandler.doTouchStart(event);
       event.preventDefault(); // would perform a blur event on the input element which would cause the popup to hide
     }, false);
@@ -276,7 +276,7 @@ var addTimePicker = {
       timePickerCanvasMouseHandler.doTouchLeave(event);
       event.preventDefault();
     }, false);
-    timePickerCanvas.addEventListener("doTouchMove", function (event) {
+    timePickerCanvas.addEventListener("touchmove", function (event) {
       timePickerCanvasMouseHandler.doTouchMove(event);
       event.preventDefault();
     }, false);
