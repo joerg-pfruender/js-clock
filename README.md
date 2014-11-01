@@ -1,3 +1,9 @@
+traditional time picker
+![traditional](screenshots/old.gif "traditional time picker")
+
+NEW js-clock time picker
+![NEW](screenshots/new.gif "NEW js-clock time picker")
+
 Time picker
 ===========
 
